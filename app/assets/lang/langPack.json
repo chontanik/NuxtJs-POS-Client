@@ -1,0 +1,15 @@
+{
+  "en": {
+    "txtLoginHeader": "Login",
+    "txtUsernameInputLable": "Username",
+    "txtPasswordInputLable": "Password",
+    "txtLoginSubmitBtn": "Submit"
+  },
+
+  "th": {
+    "txtLoginHeader": "เข้าสู่ระบบ",
+    "txtUsernameInputLable": "ชื่อผู้ใช้",
+    "txtPasswordInputLable": "รหัสผ่าน",
+    "txtLoginSubmitBtn": "ตกลง"
+  }
+}
