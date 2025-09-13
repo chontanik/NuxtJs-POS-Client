@@ -4,7 +4,7 @@
   const loading = ref(false);
 
   useHead({
-    title: "สินค้าในคลัง - MyPOS"
+    title: "เมนูอาหาร - MyPOS"
   });
 
   const isAddStockItemModalActive = ref(false);

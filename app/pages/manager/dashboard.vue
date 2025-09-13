@@ -1,10 +1,5 @@
 <script setup lang="js">
-import langPack from '~/assets/lang/langPack.json';
-import { ref } from 'vue';
-import { useDisplay } from 'vuetify';
-
-const lang = langPack.th;
-const loading = ref(false);
+  const loading = ref(false);
 </script>
 
 <template>

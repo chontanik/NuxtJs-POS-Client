@@ -1,3 +1,7 @@
+<script setup lang="js">
+  navigateTo('/login');
+</script>
+
 <template>
-  <h1>asldkjaslkdjaslkdj</h1>
+  <h1>Loading...</h1>
 </template>
