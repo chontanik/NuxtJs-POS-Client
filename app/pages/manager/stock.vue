@@ -272,7 +272,7 @@
                 <img src="https://www.palangkaset.com/wp-content/uploads/2017/05/%E0%B9%80%E0%B8%A5%E0%B8%B5%E0%B9%89%E0%B8%A2%E0%B8%87%E0%B8%AB%E0%B8%A1%E0%B8%B9-%E0%B9%83%E0%B8%99%E0%B8%AA%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B9%80%E0%B8%9B%E0%B8%A5%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%99%E0%B9%81%E0%B8%9B%E0%B8%A5%E0%B8%87-%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%99-%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%A7.jpg" alt="เนื้อหมู" class="w-full h-full object-cover" />
               </div>
               <div class="w-full lg:w-[600px] px-4 mb-3">
-                <p class="bg-[#0ca118]/20 rounded px-3 w-fit">#ปกติ</p>
+                <p class="bg-[#0ca118]/20 rounded px-3 w-fit mb-2">#ปกติ</p>
                 <h1 class="text-xl font-bold">เนื้อหมู</h1>
                 <p class="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, nemo voluptates aliquam reiciendis nihil suscipit magnam dolore nulla adipisci at dolores quod vero sint in corporis assumenda. Sequi, beatae quo.</p>
                 <p>หมวดหมู่: เนื้อสัตว์</p>

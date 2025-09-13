@@ -27,11 +27,19 @@ const paymentSummary = {
   change: 0
 }
 
-// ฟังก์ชันยืนยันชำระ (ตัวอย่าง)
 const confirmPayment = () => {
   loading.value = true
   setTimeout(() => {
-    Swal.fire('ชำระเงินสำเร็จ!', '', 'success')
+    Swal.fire({
+      title: 'ปิดรอบขายแล้ว',
+      icon: 'success',
+      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#f44336',
+      customClass: {
+        confirmButton: 'bg-primary text-white'
+      },
+    });
     loading.value = false
   }, 2000)
 }
@@ -51,7 +59,7 @@ useHead({
       <v-container fluid class="pa-4">
         <v-row>
           <!-- ส่วนซ้าย: รายละเอียดการสั่งซื้อ -->
-          <v-col cols="12" lg="6">
+          <v-col cols="12" lg="6" class="relative">
             <v-card elevation="2" class="h-100">
               <v-card-title class="text-h6 font-weight-bold pa-4">
                 เงินเข้า / เงินออก
@@ -97,70 +105,124 @@ useHead({
               <v-card-title class="text-h6 font-weight-bold pa-4 text-center">
                 สรุปยอดเงิน
               </v-card-title>
+              <div class="text-center">
+                <div>
+                  <span>เปิดรอบบิล</span>
+                </div>
+                <div>
+                  <span class="text-error">13/09/2025 08:21:23</span>
+                </div>
+              </div>
               <v-card-text class="pa-4">
                 <!-- ยอดรวมก่อนส่วนลด -->
                 <v-row class="align-center">
                   <v-col cols="8">
-                    <span class="text-body-1">ยอดขาย</span>
+                    <span class="text-body-1 font-weight-bold">ยอดเงินเริ่มต้น</span>
                   </v-col>
                   <v-col cols="4" class="text-right">
-                    <span class="text-body-1 font-weight-bold">{{ paymentSummary.subtotal }} บาท</span>
-                  </v-col>
-                </v-row>
-                
-                <!-- ส่วนลด -->
-                <v-row class="align-center">
-                  <v-col cols="8">
-                    <span class="text-body-1">ส่วนลด</span>
-                  </v-col>
-                  <v-col cols="4" class="text-right">
-                    <span class="text-body-1">-{{ paymentSummary.discount }} บาท</span>
+                    <span class="text-body-1 font-weight-bold">0 บาท</span>
                   </v-col>
                 </v-row>
                 
                 <v-divider class="my-2"></v-divider>
                 
-                <!-- ยอดสุทธิ -->
+                <v-row class="align-center mb-3" no-gutters>
+                  <v-col cols="8">
+                    <span class="text-body-1 font-weight-bold">ยอดเงินสด</span>
+                  </v-col>
+                  <v-col cols="4" class="text-right">
+                    <span class="text-body-1 font-weight-bold">0 บาท</span>
+                  </v-col>
+                </v-row>
+
+                <v-row class="align-center mb-2" no-gutters>
+                  <v-col cols="8">
+                    <span>- เงินสด</span>
+                  </v-col>
+                  <v-col cols="4" class="text-body-1 text-right">
+                    <span>0 บาท</span>
+                  </v-col>
+                </v-row>
+
+                <v-row class="align-center mb-2" no-gutters>
+                  <v-col cols="8">
+                    <span>- บัตร</span>
+                  </v-col>
+                  <v-col cols="4" class="text-body-1 text-right">
+                    <span>0 บาท</span>
+                  </v-col>
+                </v-row>
+
+                <v-row class="align-center mb-2" no-gutters>
+                  <v-col cols="8">
+                    <span>- โอนเงิน</span>
+                  </v-col>
+                  <v-col cols="4" class="text-body-1 text-right">
+                    <span>0 บาท</span>
+                  </v-col>
+                </v-row>
+
+                <v-row class="align-center mb-2" no-gutters>
+                  <v-col cols="8">
+                    <span>- อื่นๆ</span>
+                  </v-col>
+                  <v-col cols="4" class="text-body-1 text-right">
+                    <span>0 บาท</span>
+                  </v-col>
+                </v-row>
+
+                <v-divider class="my-2"></v-divider>
+
                 <v-row class="align-center">
                   <v-col cols="8">
-                    <span class="text-subtitle-1 font-weight-bold">ยอดที่ต้องชำระ</span>
+                    <span class="text-body-1 font-weight-bold">การคืนเงิน</span>
                   </v-col>
                   <v-col cols="4" class="text-right">
-                    <span class="text-subtitle-1 font-weight-bold text-success">{{ paymentSummary.total }} บาท</span>
+                    <span class="text-body-1 font-weight-bold">0 บาท</span>
                   </v-col>
                 </v-row>
-                
+
                 <v-divider class="my-2"></v-divider>
-                
-                <!-- วิธีชำระ -->
-                <v-row class="align-center mb-2">
-                  <v-col cols="8">
-                    <span class="text-body-1">ชำระด้วย</span>
-                  </v-col>
-                  <v-col cols="4" class="text-right">
-                    <span class="text-body-1">เงินสด</span>
-                  </v-col>
-                </v-row>
-                
-                <!-- ยอดชำระแต่ละวิธี -->
-                <v-row v-for="(value, method) in paymentSummary.paid" :key="method" class="align-center" :class="{ 'text-error': method === 'lineman' }">
-                  <v-col cols="8" class="text-lowercase">
-                    <span class="text-body-2">- {{ method === 'lineman' ? 'lineman' : method === 'card' ? 'บัตร' : method === 'other' ? 'อื่นๆ' : 'เงินสด' }}</span>
-                  </v-col>
-                  <v-col cols="4" class="text-right">
-                    <span class="text-body-2">{{ value }} บาท</span>
-                  </v-col>
-                </v-row>
-                
-                <v-divider class="my-2"></v-divider>
-                
-                <!-- เงินทอน -->
+
                 <v-row class="align-center">
                   <v-col cols="8">
-                    <span class="text-subtitle-1 font-weight-bold">เงินทอน</span>
+                    <span class="text-body-1 font-weight-bold">เงินเข้า/ออก</span>
                   </v-col>
                   <v-col cols="4" class="text-right">
-                    <span class="text-subtitle-1 font-weight-bold text-warning">{{ paymentSummary.change }} บาท</span>
+                    <span class="text-body-1 font-weight-bold">0 บาท</span>
+                  </v-col>
+                </v-row>
+
+                <v-divider class="my-2"></v-divider>
+
+                <div class="w-full mt-6 mb-6">
+                  <div class="text-center">
+                    <div class="mb-2">
+                      <span class="text-body-1 font-weight-bold">จำนวนเงินที่ควรมีในถาดเก็บเงิน</span>
+                    </div>
+                    <div>
+                      <span class="text-2xl text-success">0</span>
+                    </div>
+                  </div>
+                </div>
+
+                <v-row class="align-center" no-gutters>
+                  <v-col cols="8">
+                    <span class="text-body-1 font-weight-bold">จำนวนเงินที่มีอยู่จริง</span>
+                  </v-col>
+                  <v-col cols="4" class="text-right">
+                    <span class="text-body-1">
+                      <v-number-input label="จำนวนเงิน" control-variant="split" variant="outlined" color="primary" density="compact" class="pa-0 ma-0"></v-number-input>
+                    </span>
+                  </v-col>
+                </v-row>
+
+                <v-row class="align-center" no-gutters>
+                  <v-col cols="8">
+                    <span class="text-body-1 font-weight-bold">ส่วนต่าง</span>
+                  </v-col>
+                  <v-col cols="4" class="text-center">
+                    <span class="text-body-1">0</span>
                   </v-col>
                 </v-row>
               </v-card-text>
@@ -184,19 +246,3 @@ useHead({
     </v-overlay>
   </v-app>
 </template>
-
-<style scoped>
-/* เพิ่มสไตล์เพื่อให้ใกล้เคียงรูป */
-.v-card {
-  border-radius: 8px;
-}
-.text-success {
-  color: #4CAF50 !important;
-}
-.text-warning {
-  color: #FF9800 !important;
-}
-.text-error {
-  color: #F44336 !important;
-}
-</style>
