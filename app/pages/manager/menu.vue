@@ -239,10 +239,10 @@
   }
 
   // Add food option
-  const isMainOptionActiveArray = ref([]);
+  const menuOptionData = ref([]);
   async function addMainOption() {
     console.log("Adding main option");
-    isMainOptionActiveArray.value.push({
+    menuOptionData.value.push({
       type: 1,
       mainTitle: null,
       subTitle: [{
@@ -250,18 +250,22 @@
       }]
     });
 
-    console.log(isMainOptionActiveArray.value);
+    console.log(menuOptionData.value);
   }
 
   async function addSubOption(mainOptionIndex) {
     console.log("Adding sub option");
-    isMainOptionActiveArray.value[mainOptionIndex].subTitle.push({title: null});
+    menuOptionData.value[mainOptionIndex].subTitle.push({title: null});
 
-    console.log(isMainOptionActiveArray.value);
+    console.log(menuOptionData.value);
   }
 
+  const materailData = ref([]);
   async function addMaterail() {
-
+    materailData.value.push({
+      _id: null,
+      amount: null
+    });
   }
 </script>
 
@@ -342,8 +346,8 @@
   </v-app>
 
   <!-- Add item modal -->
-  <Modal :show="isAddStockItemModalActive" title="เพิ่มรายการสินค้าคงคลัง">
-  <!-- <Modal :show="true" title="เพิ่มรายการเมนูในร้าน"> -->
+  <!-- <Modal :show="isAddStockItemModalActive" title="เพิ่มรายการสินค้าคงคลัง"> -->
+  <Modal :show="true" title="เพิ่มรายการเมนูในร้าน">
     <v-form>
       <div>
         <v-file-input v-model="addStockItemPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
@@ -363,7 +367,8 @@
         <v-number-input label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
         <v-select label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="['อาหารจานหลัก', 'ของกินเล่น', 'เครื่องดื่ม']" variant="outlined" required></v-select>
 
-        <div v-for="(item, index) in isMainOptionActiveArray" class="border pa-3 mb-6">
+        <!-- Option border -->
+        <div v-for="(item, index) in menuOptionData" class="border pa-3 mb-6">
           <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
           <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
           <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
@@ -372,7 +377,14 @@
           <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
         </div>
         <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMainOption">+ เพิ่มหัวข้อตัวเลือก</v-btn>
-        <!-- <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn> -->
+
+        <!-- Material border -->
+        <div v-for="(item, index) in materailData" class="border pa-3 mb-6">
+          <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+          <v-number-input v-model="item.amount" controlVariant="split" label="ปริมาณ" color="primary" variant="outlined"></v-number-input>
+          <!-- <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn> -->
+        </div>
+        <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn>
       </div>
 
       <div class="flex justify-end gap-3">
