@@ -237,6 +237,32 @@
 
     console.log("update stock item success");
   }
+
+  // Add food option
+  const isMainOptionActiveArray = ref([]);
+  async function addMainOption() {
+    console.log("Adding main option");
+    isMainOptionActiveArray.value.push({
+      type: 1,
+      mainTitle: null,
+      subTitle: [{
+        title: null
+      }]
+    });
+
+    console.log(isMainOptionActiveArray.value);
+  }
+
+  async function addSubOption(mainOptionIndex) {
+    console.log("Adding sub option");
+    isMainOptionActiveArray.value[mainOptionIndex].subTitle.push({title: null});
+
+    console.log(isMainOptionActiveArray.value);
+  }
+
+  async function addMaterail() {
+
+  }
 </script>
 
 <template>
@@ -248,7 +274,10 @@
     <v-main>
       <v-container>
         <div class="flex justify-between gap-3 mb-3 py-3 border-b border-[#121212]">
-          <v-btn @click="isAddStockItemModalActive = true" color="primary">เพิ่มรายการใหม่</v-btn>
+          <div class="flex justify-start gap-2">
+            <v-btn @click="isAddStockItemModalActive = true">เลือกเมนูใหม่</v-btn>
+            <v-btn @click="isAddStockItemModalActive = true">เพิ่มหมวดหมู่</v-btn>
+          </div>
 
           <v-menu>
             <template v-slot:activator="{ props }">
@@ -314,17 +343,10 @@
 
   <!-- Add item modal -->
   <Modal :show="isAddStockItemModalActive" title="เพิ่มรายการสินค้าคงคลัง">
-    <v-form @submit.prevent="addStockItem">
+  <!-- <Modal :show="true" title="เพิ่มรายการเมนูในร้าน"> -->
+    <v-form>
       <div>
-        <v-text-field v-model="addStockItemPayload.title" label="ชื่อรายการ" color="primary" variant="outlined" required></v-text-field>
-        <v-textarea v-model="addStockItemPayload.detail" label="รายละเอียด" color="primary" variant="outlined" required></v-textarea>
-        <v-select v-model="addStockItemPayload.category" label="หมวดหมู่" color="primary" :items="['เนื้อสัตว์', 'เครื่องดื่ม', 'ผัก']" variant="outlined" required></v-select>
-        <v-number-input v-model="addStockItemPayload.amount" label="จำนวน" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-        <v-select v-model="addStockItemPayload.unit" label="หน่วย" color="primary" :items="['กิโลกรัม', 'ลิตร', 'ขวด', 'ถุง']" variant="outlined" required></v-select>
-        <v-number-input v-model="addStockItemPayload.price" label="ราคา" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-        <!-- File Input Section -->
         <v-file-input v-model="addStockItemPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
-        <!-- Image Preview -->
         <div v-if="imagePreview" class="mb-4">
           <v-card class="mx-auto" max-width="300">
             <v-img :src="imagePreview" height="200" cover></v-img>
@@ -336,6 +358,21 @@
             </v-card-actions>
           </v-card>
         </div>
+        <v-text-field label="ชื่อเมนู" color="primary" variant="outlined" required></v-text-field>
+        <v-textarea label="รายละเอียดเมนู" color="primary" variant="outlined" required></v-textarea>
+        <v-number-input label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
+        <v-select label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="['อาหารจานหลัก', 'ของกินเล่น', 'เครื่องดื่ม']" variant="outlined" required></v-select>
+
+        <div v-for="(item, index) in isMainOptionActiveArray" class="border pa-3 mb-6">
+          <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+          <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
+          <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
+            <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+          </div>
+          <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
+        </div>
+        <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMainOption">+ เพิ่มหัวข้อตัวเลือก</v-btn>
+        <!-- <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn> -->
       </div>
 
       <div class="flex justify-end gap-3">
