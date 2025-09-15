@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "nuxt-app",
+      name: "POS_NUXTJS_CLIENT",
       script: "npm",
       args: "run start",
       env: {
