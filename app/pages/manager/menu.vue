@@ -346,8 +346,8 @@
   </v-app>
 
   <!-- Add item modal -->
-  <!-- <Modal :show="isAddStockItemModalActive" title="เพิ่มรายการสินค้าคงคลัง"> -->
-  <Modal :show="true" title="เพิ่มรายการเมนูในร้าน">
+  <Modal :show="isAddStockItemModalActive" title="เพิ่มรายการเมนูในร้าน">
+  <!-- <Modal :show="true" title="เพิ่มรายการเมนูในร้าน"> -->
     <v-form>
       <div>
         <v-file-input v-model="addStockItemPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
