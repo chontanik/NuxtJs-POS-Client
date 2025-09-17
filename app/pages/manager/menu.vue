@@ -1,4 +1,4 @@
-<script setup lang="js">
+<<script setup lang="js">
   import Swal from 'sweetalert2'
 
   const loading = ref(false);
@@ -7,236 +7,14 @@
     title: "เมนูอาหาร - MyPOS"
   });
 
-  const isAddStockItemModalActive = ref(false);
-  const isUpdateStockItemModalActive = ref(false);
-  const isDeleteStockItemModalActive = ref(false);
+  const isAddMenuItemActive = ref(false);
+  // const isUpdateStockItemModalActive = ref(false);
+  // const isDeleteStockItemModalActive = ref(false);
 
-  const addStockItemPayload = ref({
-    title: null,
-    detail: null,
-    category: null,
-    amount: 1,
-    unit: null,
-    price: 0
+  // Add menu item list
+  const addMenuPayload = ref({
+
   });
-
-  async function addStockItem() {
-    // Check empty input payload value
-    if (addStockItemPayload.value.title == null || addStockItemPayload.value.detail == null || addStockItemPayload.value.category == null || addStockItemPayload.value.unit == null) {
-      // Active sweet alert. Error some input is empty value
-      const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        }
-      });
-      Toast.fire({
-        icon: "error",
-        title: "โปรดกรอกข้อมูลให้ครบ"
-      });
-
-      console.error("Can't submit empty input!");
-      return "Can't submit empty input!";
-    }
-
-    // Begin add stock item
-    console.log("adding stock item");
-    loading.value = true;
-
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-
-    // Active sweet alert. Add stock item success
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.onmouseenter = Swal.stopTimer;
-        toast.onmouseleave = Swal.resumeTimer;
-      }
-    });
-    Toast.fire({
-      icon: "success",
-      title: "เพิ่มรายการสินค้าคงคลังสำเร็จ"
-    });
-
-    isAddStockItemModalActive.value = false;
-    loading.value = false;
-
-    // Clear payload after add item success
-    addStockItemPayload.value = {
-      title: null,
-      detail: null,
-      category: null,
-      amount: 1,
-      unit: null,
-      price: 0
-    };
-    imagePreview.value = "";
-    fileInput.value = null;
-
-    console.log("add stock item succesed");
-  }
-
-  const imagePreview = ref('');
-  const fileInput = ref(null);
-
-  // Watch for file changes
-  watch(() => addStockItemPayload.value.image, (newFile) => {
-    if (newFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        imagePreview.value = e.target.result;
-      }
-      reader.readAsDataURL(newFile);
-    } else {
-      imagePreview.value = '';
-    }
-  })
-
-  // Validate file type
-  function validateFile(file) {
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    return allowedTypes.includes(file.type);
-  }
-
-  // Handle file selection
-  function onFileSelect(files) {
-    if (files && files.length > 0) {
-      const file = files[0]
-      if (validateFile(file)) {
-        addStockItemPayload.value.image = file;
-      } else {
-        // Active sweet alert. Error some input is empty value
-        const Toast = Swal.mixin({
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-          }
-        });
-        Toast.fire({
-          icon: "error",
-          title: "กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)"
-        });
-        // Reset file input
-        addStockItemPayload.value.image = null;
-      }
-    }
-  }
-
-  // Remove image
-  function removeImage() {
-    addStockItemPayload.value.image = null
-    imagePreview.value = ''
-  }
-
-  async function updateStockItem() {
-    // Check empty input payload value
-    if (addStockItemPayload.value.title == null || addStockItemPayload.value.detail == null || addStockItemPayload.value.category == null || addStockItemPayload.value.unit == null) {
-      // Active sweet alert. Error some input is empty value
-      const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.onmouseenter = Swal.stopTimer;
-          toast.onmouseleave = Swal.resumeTimer;
-        }
-      });
-      Toast.fire({
-        icon: "error",
-        title: "โปรดกรอกข้อมูลให้ครบ"
-      });
-
-      console.error("Can't submit empty input!");
-      return "Can't submit empty input!";
-    }
-
-    // Begin add stock item
-    console.log("updating stock item");
-    loading.value = true;
-
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-
-    // Active sweet alert. Add stock item success
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.onmouseenter = Swal.stopTimer;
-        toast.onmouseleave = Swal.resumeTimer;
-      }
-    });
-    Toast.fire({
-      icon: "success",
-      title: "อัพเดตรายการสินค้าคงคลังสำเร็จ"
-    });
-
-    isUpdateStockItemModalActive.value = false;
-    loading.value = false;
-
-    // Clear payload after add item success
-    addStockItemPayload.value = {
-      title: null,
-      detail: null,
-      category: null,
-      amount: 1,
-      unit: null,
-      price: 0
-    };
-    imagePreview.value = "";
-    fileInput.value = null;
-
-    console.log("update stock item success");
-  }
-
-  // Delete stock item
-  async function deleteStockItem() {
-    // Begin delete stock item
-    console.log("updating stock item");
-    loading.value = true;
-
-    await new Promise(resolve => setTimeout(resolve, 1000)); 
-
-    // Active sweet alert. Delete stock item success
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.onmouseenter = Swal.stopTimer;
-        toast.onmouseleave = Swal.resumeTimer;
-      }
-    });
-    Toast.fire({
-      icon: "success",
-      title: "ลบรายการสินค้าคงคลังสำเร็จ"
-    });
-
-    isDeleteStockItemModalActive.value = false;
-    loading.value = false;
-
-    console.log("update stock item success");
-  }
 
   // Add food option
   const menuOptionData = ref([]);
@@ -346,69 +124,67 @@
   </v-app>
 
   <!-- Add item modal -->
-  <Modal :show="isAddStockItemModalActive" title="เพิ่มรายการเมนูในร้าน">
-  <!-- <Modal :show="true" title="เพิ่มรายการเมนูในร้าน"> -->
-    <v-form>
-      <div>
-        <v-file-input v-model="addStockItemPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
-        <div v-if="imagePreview" class="mb-4">
-          <v-card class="mx-auto" max-width="300">
-            <v-img :src="imagePreview" height="200" cover></v-img>
+  <!-- <Modal :show="isAddMenuItemActive" title="เพิ่มรายการเมนูในร้าน"> -->
+  <Modal :show="true" title="เพิ่มรายการเมนูในร้าน">
+    <div>
+      <v-file-input label="รูปภาพ" variant="outlined" accept="image/*" prepend-icon="mdi-camera" show-size required></v-file-input>
+      <div v-if="imagePreview" class="mb-4">
+        <v-card class="mx-auto" max-width="300">
+          <v-img :src="imagePreview" height="200" cover></v-img>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red" variant="text" size="small">
+              ลบรูปภาพ
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </div>
+      <v-text-field label="ชื่อเมนู" color="primary" variant="outlined" required></v-text-field>
+      <v-textarea label="รายละเอียดเมนู" color="primary" variant="outlined" required></v-textarea>
+      <v-number-input label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
+      <v-select label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="['อาหารจานหลัก', 'ของกินเล่น', 'เครื่องดื่ม']" variant="outlined" required></v-select>
+
+      <!-- Option border -->
+      <div v-for="(item, index) in menuOptionData" class="border pa-3 mb-6">
+        <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+        <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
+        <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
+          <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+        </div>
+        <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
+      </div>
+      <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMainOption">+ เพิ่มหัวข้อตัวเลือก</v-btn>
+
+      <!-- Material border -->
+      <div v-for="(item, index) in materailData" class="border pa-3 mb-6">
+        <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+        <v-number-input v-model="item.amount" controlVariant="split" label="ปริมาณ" color="primary" variant="outlined"></v-number-input>
+        <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'กิโลกรัม', value: 1}, {title: 'กรัม', value: 2}, {title: 'มิลลิกรัม', value: 3}, {title: 'ลิตร', value: 4}, {title: 'มิลลิลิต', value: 5}, {title: 'ขวด', value: 6}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+      </div>
+      <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn>
+    </div>
+
+    <div class="flex justify-end gap-3">
+      <v-dialog max-width="500">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn v-bind="activatorProps" color="primary">เพิ่มรายการ</v-btn>
+        </template>
+
+        <template v-slot:default="{ isActive }">
+          <v-card title="ยืนยันการทำรายการ">
+            <v-card-text>
+              ยืนยันการทำรายการนี้หรือไม่
+            </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="red" variant="text" @click="removeImage" size="small">
-                ลบรูปภาพ
-              </v-btn>
+              <v-btn @click="isActive.value = false" class="text-primary">ตกลง</v-btn>
+              <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
             </v-card-actions>
           </v-card>
-        </div>
-        <v-text-field label="ชื่อเมนู" color="primary" variant="outlined" required></v-text-field>
-        <v-textarea label="รายละเอียดเมนู" color="primary" variant="outlined" required></v-textarea>
-        <v-number-input label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-        <v-select label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="['อาหารจานหลัก', 'ของกินเล่น', 'เครื่องดื่ม']" variant="outlined" required></v-select>
-
-        <!-- Option border -->
-        <div v-for="(item, index) in menuOptionData" class="border pa-3 mb-6">
-          <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
-          <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
-          <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
-            <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
-          </div>
-          <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
-        </div>
-        <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMainOption">+ เพิ่มหัวข้อตัวเลือก</v-btn>
-
-        <!-- Material border -->
-        <div v-for="(item, index) in materailData" class="border pa-3 mb-6">
-          <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
-          <v-number-input v-model="item.amount" controlVariant="split" label="ปริมาณ" color="primary" variant="outlined"></v-number-input>
-          <!-- <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn> -->
-        </div>
-        <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn>
-      </div>
-
-      <div class="flex justify-end gap-3">
-        <v-dialog max-width="500">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn v-bind="activatorProps" color="primary">เพิ่มรายการ</v-btn>
-          </template>
-
-          <template v-slot:default="{ isActive }">
-            <v-card title="ยืนยันการทำรายการ">
-              <v-card-text>
-                ยืนยันการทำรายการนี้หรือไม่
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn @click="addStockItem(); isActive.value = false" class="text-primary">ตกลง</v-btn>
-                <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
-        <v-btn @click="isAddStockItemModalActive = false">ปิดหน้าต่าง</v-btn>
-      </div>
-    </v-form>
+        </template>
+      </v-dialog>
+      <v-btn>ปิดหน้าต่าง</v-btn>
+    </div>
   </Modal>
 
   <!-- Edit stock item -->
@@ -461,3 +237,4 @@
     </v-form>
   </Modal>
 </template>
+>
