@@ -343,7 +343,7 @@
           <v-number-input v-model="addStockItemPayload.amount" label="จำนวน" color="primary" controlVariant="split" variant="outlined"></v-number-input>
         </v-col>
         <v-col>
-          <v-select v-model="addStockItemPayload.unit" label="หน่วย" color="primary" :items="['กิโลกรัม', 'ลิตร', 'ขวด', 'ถุง']" variant="outlined"></v-select>
+          <v-select v-model="addStockItemPayload.unit" label="หน่วย" color="primary" :items="['กิโลกรัม', 'กรัม', 'มิลลิกรัม', 'ลิตร', 'มิลลิลิต', 'ขวด', 'ฟอง']" variant="outlined"></v-select>
         </v-col>
       </v-row>
       <v-number-input v-model="addStockItemPayload.price" label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined"></v-number-input>

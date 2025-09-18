@@ -11,9 +11,32 @@
   // const isUpdateStockItemModalActive = ref(false);
   // const isDeleteStockItemModalActive = ref(false);
 
-  // Add menu item list
-  const addMenuPayload = ref({
+  // Get stock category
+  const stockCategoryList = ref([]);
+  async function getStockCategoryList() {
+    const category = JSON.parse(localStorage.getItem("category")) || [];
+    const categoryFillter = category.filter(item => item.categoryOf.includes("อาหาร"));
 
+    for (var i = 0; i < categoryFillter.length; i++) {
+      stockCategoryList.value.push(categoryFillter[i]['title']);
+    }
+  }
+  onMounted(async () => {
+    await getStockCategoryList();
+  });
+
+  // Get stock item list
+  const stockList = ref([]);
+  async function getMaterail() {
+    const stock = JSON.parse(localStorage.getItem("stockList")) || [];
+
+    for (var i = 0; i < stock.length; i++) {
+      stockList.value.push(stock[i]['title']);
+    }
+  }
+  onMounted(async () => {
+    console.log(stockList.value);
+    await getMaterail();
   });
 
   // Add food option
@@ -30,7 +53,6 @@
 
     console.log(menuOptionData.value);
   }
-
   async function addSubOption(mainOptionIndex) {
     console.log("Adding sub option");
     menuOptionData.value[mainOptionIndex].subTitle.push({title: null});
@@ -38,12 +60,117 @@
     console.log(menuOptionData.value);
   }
 
+  // Add food materail
   const materailData = ref([]);
   async function addMaterail() {
     materailData.value.push({
       _id: null,
-      amount: null
+      amount: null,
+      unit: 'กิโลกรัม'
     });
+  }
+
+  // Add menu item list
+  const addMenuPayload = ref({
+    status: 1,
+    img: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg",
+    image: null,
+    title: null,
+    detail: null,
+    price: null,
+    category: null,
+    option: menuOptionData.value,
+    materail: materailData.value
+  });
+  async function onAddMenuSubmit() {
+    loading.value = true;
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const menuList = JSON.parse(localStorage.getItem("menuList")) || [];
+    menuList.push(addMenuPayload.value);
+    localStorage.setItem("menuList", JSON.stringify(menuList));
+    console.log(addMenuPayload.value);
+
+    Swal.fire({
+      title: 'เพิ่มเมนูอาหารสำเร็จ',
+      icon: 'success',
+      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#f44336',
+      customClass: {
+        confirmButton: 'bg-primary text-white'
+      },
+    });
+
+    // Clear payload after sunmit success
+    addMenuPayload.value = {
+      status: 1,
+      img: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg",
+      image: null,
+      title: null,
+      detail: null,
+      price: null,
+      category: null,
+      option: [],
+      materail: []
+    }
+
+    loading.value = false;
+    isAddMenuItemActive.value = false;
+  }
+
+  // Upload image and preview image
+  const imagePreview = ref('');
+  const fileInput = ref(null);
+  // Watch for file changes
+  watch(() => addMenuPayload.value.image, (newFile) => {
+    if (newFile) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.value = e.target.result;
+      }
+      reader.readAsDataURL(newFile);
+    } else {
+      imagePreview.value = '';
+    }
+  })
+  // Validate file type
+  function validateFile(file) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    return allowedTypes.includes(file.type);
+  }
+  // Handle file selection
+  function onFileSelect(files) {
+    if (files && files.length > 0) {
+      const file = files[0]
+      if (validateFile(file)) {
+        addMenuPayload.value.image = file;
+      } else {
+        // Active sweet alert. Error some input is empty value
+        const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });
+        Toast.fire({
+          icon: "error",
+          title: "กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)"
+        });
+        // Reset file input
+        addMenuPayload.value.image = null;
+      }
+    }
+  }
+  // Remove image
+  function removeImage() {
+    addMenuPayload.value.image = null
+    imagePreview.value = ''
   }
 </script>
 
@@ -124,25 +251,25 @@
   </v-app>
 
   <!-- Add item modal -->
-  <!-- <Modal :show="isAddMenuItemActive" title="เพิ่มรายการเมนูในร้าน"> -->
-  <Modal :show="true" title="เพิ่มรายการเมนูในร้าน">
+  <Modal :show="isAddMenuItemActive" title="เพิ่มรายการเมนูในร้าน">
+  <!-- <Modal :show="true" title="เพิ่มรายการเมนูในร้าน"> -->
     <div>
-      <v-file-input label="รูปภาพ" variant="outlined" accept="image/*" prepend-icon="mdi-camera" show-size required></v-file-input>
+      <v-file-input v-model="addMenuPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size></v-file-input>
       <div v-if="imagePreview" class="mb-4">
         <v-card class="mx-auto" max-width="300">
           <v-img :src="imagePreview" height="200" cover></v-img>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="red" variant="text" size="small">
+            <v-btn color="red" variant="text" @click="removeImage" size="small">
               ลบรูปภาพ
             </v-btn>
           </v-card-actions>
         </v-card>
       </div>
-      <v-text-field label="ชื่อเมนู" color="primary" variant="outlined" required></v-text-field>
-      <v-textarea label="รายละเอียดเมนู" color="primary" variant="outlined" required></v-textarea>
-      <v-number-input label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-      <v-select label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="['อาหารจานหลัก', 'ของกินเล่น', 'เครื่องดื่ม']" variant="outlined" required></v-select>
+      <v-text-field v-model="addMenuPayload.title" label="ชื่อเมนู" color="primary" variant="outlined" required></v-text-field>
+      <v-textarea v-model="addMenuPayload.detail" label="รายละเอียดเมนู" color="primary" variant="outlined" required></v-textarea>
+      <v-number-input v-model="addMenuPayload.price" label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
+      <v-select v-model="addMenuPayload.category" label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="stockCategoryList" variant="outlined" required></v-select>
 
       <!-- Option border -->
       <div v-for="(item, index) in menuOptionData" class="border pa-3 mb-6">
@@ -157,9 +284,10 @@
 
       <!-- Material border -->
       <div v-for="(item, index) in materailData" class="border pa-3 mb-6">
-        <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+        <!-- <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select> -->
+        <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="stockList" variant="outlined" color="primary"></v-select>
         <v-number-input v-model="item.amount" controlVariant="split" label="ปริมาณ" color="primary" variant="outlined"></v-number-input>
-        <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="[{title: 'กิโลกรัม', value: 1}, {title: 'กรัม', value: 2}, {title: 'มิลลิกรัม', value: 3}, {title: 'ลิตร', value: 4}, {title: 'มิลลิลิต', value: 5}, {title: 'ขวด', value: 6}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+        <v-select v-model="item.unit" label="หน่วย" :items="['กิโลกรัม', 'กรัม', 'มิลลิกรัม', 'ลิตร', 'มิลลิลิต', 'ขวด', 'ฟอง']" variant="outlined" color="primary"></v-select>
       </div>
       <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn>
     </div>
@@ -177,7 +305,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn @click="isActive.value = false" class="text-primary">ตกลง</v-btn>
+              <v-btn @click="onAddMenuSubmit(); isActive.value = false" class="text-primary">ตกลง</v-btn>
               <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
             </v-card-actions>
           </v-card>
@@ -191,14 +319,14 @@
   <Modal :show="isUpdateStockItemModalActive" title="แก้ไขรายการ">
     <v-form @submit.prevent="updateStockItem">
       <div>
-        <v-text-field v-model="addStockItemPayload.title" label="ชื่อรายการ" color="primary" variant="outlined" required></v-text-field>
-        <v-textarea v-model="addStockItemPayload.detail" label="รายละเอียด" color="primary" variant="outlined" required></v-textarea>
-        <v-select v-model="addStockItemPayload.category" label="หมวดหมู่" color="primary" :items="['เนื้อสัตว์', 'เครื่องดื่ม', 'ผัก']" variant="outlined" required></v-select>
-        <v-number-input v-model="addStockItemPayload.amount" label="จำนวน" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-        <v-select v-model="addStockItemPayload.unit" label="หน่วย" color="primary" :items="['กิโลกรัม', 'ลิตร', 'ขวด', 'ถุง']" variant="outlined" required></v-select>
-        <v-number-input v-model="addStockItemPayload.price" label="ราคา" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
+        <v-text-field v-model="addMenuPayload.title" label="ชื่อรายการ" color="primary" variant="outlined" required></v-text-field>
+        <v-textarea v-model="addMenuPayload.detail" label="รายละเอียด" color="primary" variant="outlined" required></v-textarea>
+        <v-select v-model="addMenuPayload.category" label="หมวดหมู่" color="primary" :items="['เนื้อสัตว์', 'เครื่องดื่ม', 'ผัก']" variant="outlined" required></v-select>
+        <v-number-input v-model="addMenuPayload.amount" label="จำนวน" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
+        <v-select v-model="addMenuPayload.unit" label="หน่วย" color="primary" :items="['กิโลกรัม', 'ลิตร', 'ขวด', 'ถุง']" variant="outlined" required></v-select>
+        <v-number-input v-model="addMenuPayload.price" label="ราคา" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
         <!-- File Input Section -->
-        <v-file-input v-model="addStockItemPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
+        <v-file-input v-model="addMenuPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
         <!-- Image Preview -->
         <div v-if="imagePreview" class="mb-4">
           <v-card class="mx-auto" max-width="300">
