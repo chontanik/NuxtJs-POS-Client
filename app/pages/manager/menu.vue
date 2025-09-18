@@ -8,7 +8,7 @@
   });
 
   const isAddMenuItemActive = ref(false);
-  // const isUpdateStockItemModalActive = ref(false);
+  const isUpdateMenuItemModalActive = ref(false);
   // const isDeleteStockItemModalActive = ref(false);
 
   // Get stock category
@@ -37,6 +37,16 @@
   onMounted(async () => {
     console.log(stockList.value);
     await getMaterail();
+  });
+
+  // Get menu list
+  const menuList = ref([]);
+  async function getMenuList() {
+    const menu = JSON.parse(localStorage.getItem("menuList")) || [];
+    menuList.value = menu;
+  }
+  onMounted(async () => {
+    await getMenuList();
   });
 
   // Add food option
@@ -119,6 +129,94 @@
     isAddMenuItemActive.value = false;
   }
 
+  // Update menu item
+  const updateMenuPayload = ref({
+    status: 1,
+    img: "https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg",
+    image: null,
+    title: null,
+    detail: null,
+    price: null,
+    category: null,
+    option: [],
+    materail: []
+  });
+  async function activeUpdateMenuItemModal(_id) {
+    console.log(_id);
+    isUpdateMenuItemModalActive.value = true;
+
+    const menu = JSON.parse(localStorage.getItem("menuList")) || [];
+    console.log(menu[_id]);
+
+    updateMenuPayload.value = {
+      _id: _id,
+      status: menu[_id]['status'],
+      img: menu[_id]['img'],
+      image: null,
+      title: menu[_id]['title'],
+      detail: menu[_id]['detail'],
+      price: menu[_id]['price'],
+      category: menu[_id]['category'],
+      option: menu[_id]['option'],
+      materail: menu[_id]['materail']
+    }
+  }
+  async function onUpdateMenuItemSubmit(_id) {
+    loading.value = true;
+
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    const menu = JSON.parse(localStorage.getItem("menuList")) || [];
+    console.log(menu[_id]);
+    menu[_id] = updateMenuPayload.value;
+    localStorage.setItem("menuList", JSON.stringify(menu));
+  
+    loading.value = false;
+    isUpdateMenuItemModalActive.value = false;
+
+    Swal.fire({
+      title: 'แก้ไขเมนูอาหารสำเร็จสำเร็จ',
+      icon: 'success',
+      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#f44336',
+      customClass: {
+        confirmButton: 'bg-primary text-white'
+      },
+    });
+    await getMenuList();
+  }
+
+  // Delete menu item
+  async function onDeleteMenuItem(_id) {
+    loading.value = true;
+
+    console.log(_id);
+    const menu = JSON.parse(localStorage.getItem("menuList")) || [];
+    const index = menu.findIndex(item => item._id === _id);
+    if (index !== -1) {
+      menu.splice(index, 1);
+    }
+    console.log(menu);
+    localStorage.setItem("menuList", JSON.stringify(menu));
+
+    loading.value = false;
+    isUpdateMenuItemModalActive.value = false;
+
+    Swal.fire({
+      title: 'ลบสินค้าในคลังสำเร็จ',
+      icon: 'success',
+      confirmButtonText: 'ตกลง',
+      confirmButtonColor: '#4CAF50',
+      cancelButtonColor: '#f44336',
+      customClass: {
+        confirmButton: 'bg-primary text-white'
+      },
+    });
+
+    await getMenuList();
+  }
+
   // Upload image and preview image
   const imagePreview = ref('');
   const fileInput = ref(null);
@@ -184,8 +282,7 @@
       <v-container>
         <div class="flex justify-between gap-3 mb-3 py-3 border-b border-[#121212]">
           <div class="flex justify-start gap-2">
-            <v-btn @click="isAddStockItemModalActive = true">เลือกเมนูใหม่</v-btn>
-            <v-btn @click="isAddStockItemModalActive = true">เพิ่มหมวดหมู่</v-btn>
+            <v-btn @click="isAddMenuItemActive = true">เลือกเมนูใหม่</v-btn>
           </div>
 
           <v-menu>
@@ -203,43 +300,28 @@
             </v-list>
           </v-menu>
         </div>
-        <div>
-          <div class="w-full border-b border-[#121212] py-3">
-            <div class="flex flex-wrap">
-              <div class="w-[120px] h-[120px] flex-shrink-0 mb-3 lg:mb-0">
-                <img src="https://www.palangkaset.com/wp-content/uploads/2017/05/%E0%B9%80%E0%B8%A5%E0%B8%B5%E0%B9%89%E0%B8%A2%E0%B8%87%E0%B8%AB%E0%B8%A1%E0%B8%B9-%E0%B9%83%E0%B8%99%E0%B8%AA%E0%B8%A0%E0%B8%B2%E0%B8%9E%E0%B8%AD%E0%B8%B2%E0%B8%81%E0%B8%B2%E0%B8%A8%E0%B9%80%E0%B8%9B%E0%B8%A5%E0%B8%B5%E0%B9%88%E0%B8%A2%E0%B8%99%E0%B9%81%E0%B8%9B%E0%B8%A5%E0%B8%87-%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%99-%E0%B8%AB%E0%B8%99%E0%B9%89%E0%B8%B2%E0%B8%AB%E0%B8%99%E0%B8%B2%E0%B8%A7.jpg" alt="เนื้อหมู" class="w-full h-full object-cover" />
-              </div>
-              <div class="w-full lg:w-[600px] px-4 mb-3">
-                <p class="bg-[#0ca118]/20 rounded px-3 w-fit">#ปกติ</p>
-                <h1 class="text-xl font-bold">เนื้อหมู</h1>
-                <p class="text-sm">Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus, nemo voluptates aliquam reiciendis nihil suscipit magnam dolore nulla adipisci at dolores quod vero sint in corporis assumenda. Sequi, beatae quo.</p>
-                <p>หมวดหมู่: เนื้อสัตว์</p>
-                <p>คงเหลือ: 20 กก.</p>
-                <p class="font-bold text-lg">200 บาท</p>
-              </div>
-            </div>
-            <div class="flex gap-2">
-              <v-btn color="yellow-darken-1" @click="isUpdateStockItemModalActive = true">แก้ไข</v-btn>
-              <v-dialog max-width="500">
-                <template v-slot:activator="{ props: activatorProps }">
-                  <v-btn v-bind="activatorProps" color="red-accent-4">ลบ</v-btn>
-                </template>
 
-                <template v-slot:default="{ isActive }">
-                  <v-card title="ยืนยันการทำรายการ">
-                    <v-card-text>
-                      ยืนยันการทำรายการนี้หรือไม่
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn @click="deleteStockItem(); isActive.value = false" class="text-primary">ตกลง</v-btn>
-                      <v-btn @click="isActive.value = false"><span class="text-red-accent-4">ยกเลิก</span></v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </template>
-              </v-dialog>
-            </div>
-          </div>
+        <div>
+          <v-hover v-for="(menuItem, menuIndex) in menuList">
+            <template v-slot:default="{ isHovering, props }">
+              <v-card elevation="0" v-bind="props" :color="isHovering ? 'blue-lighten-5' : ''" class="w-full border-b border-[#121212] rounded-0 pa-3" @click="activeUpdateMenuItemModal(menuIndex)">
+                <div class="flex flex-wrap cursor-pointer">
+                  <div class="w-[120px] h-[120px] flex-shrink-0 mb-3 lg:mb-0">
+                    <img src="https://images.immediate.co.uk/production/volatile/sites/30/2020/08/chorizo-mozarella-gnocchi-bake-cropped-9ab73a3.jpg" alt="เนื้อหมู" class="w-full h-full object-cover rounded" />
+                  </div>
+                  <div class="ml-3">
+                    <p class="bg-green-200 rounded w-fit px-3">#สถานะ</p>
+                    <p class="text-lg font-bold">{{ menuItem.title }}</p>
+                    <p>{{ menuItem.detail }}</p>
+                    <p>หมวดหมู่: 
+                      <span>{{ menuItem.category }}</span>
+                    </p>
+                    <p><span class="font-bold text-lg">{{ Number(menuItem.price).toLocaleString("TH-th") }}</span> บาท</p>
+                  </div>
+                </div>
+              </v-card>
+            </template>
+          </v-hover>
         </div>
       </v-container>
     </v-main>
@@ -252,7 +334,6 @@
 
   <!-- Add item modal -->
   <Modal :show="isAddMenuItemActive" title="เพิ่มรายการเมนูในร้าน">
-  <!-- <Modal :show="true" title="เพิ่มรายการเมนูในร้าน"> -->
     <div>
       <v-file-input v-model="addMenuPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size></v-file-input>
       <div v-if="imagePreview" class="mb-4">
@@ -311,58 +392,89 @@
           </v-card>
         </template>
       </v-dialog>
-      <v-btn>ปิดหน้าต่าง</v-btn>
+      <v-btn @click="isAddMenuItemActive = false">ปิดหน้าต่าง</v-btn>
     </div>
   </Modal>
 
   <!-- Edit stock item -->
-  <Modal :show="isUpdateStockItemModalActive" title="แก้ไขรายการ">
-    <v-form @submit.prevent="updateStockItem">
-      <div>
-        <v-text-field v-model="addMenuPayload.title" label="ชื่อรายการ" color="primary" variant="outlined" required></v-text-field>
-        <v-textarea v-model="addMenuPayload.detail" label="รายละเอียด" color="primary" variant="outlined" required></v-textarea>
-        <v-select v-model="addMenuPayload.category" label="หมวดหมู่" color="primary" :items="['เนื้อสัตว์', 'เครื่องดื่ม', 'ผัก']" variant="outlined" required></v-select>
-        <v-number-input v-model="addMenuPayload.amount" label="จำนวน" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-        <v-select v-model="addMenuPayload.unit" label="หน่วย" color="primary" :items="['กิโลกรัม', 'ลิตร', 'ขวด', 'ถุง']" variant="outlined" required></v-select>
-        <v-number-input v-model="addMenuPayload.price" label="ราคา" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
-        <!-- File Input Section -->
-        <v-file-input v-model="addMenuPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size required></v-file-input>
-        <!-- Image Preview -->
-        <div v-if="imagePreview" class="mb-4">
-          <v-card class="mx-auto" max-width="300">
-            <v-img :src="imagePreview" height="200" cover></v-img>
+  <Modal :show="isUpdateMenuItemModalActive" title="แก้ไขรายการ">
+    <div>
+      <v-file-input v-model="updateMenuPayload.image" label="รูปภาพ" variant="outlined" accept="image/*" @update:model-value="onFileSelect" prepend-icon="mdi-camera" show-size></v-file-input>
+      <div v-if="imagePreview" class="mb-4">
+        <v-card class="mx-auto" max-width="300">
+          <v-img :src="imagePreview" height="200" cover></v-img>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="red" variant="text" @click="removeImage" size="small">
+              ลบรูปภาพ
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </div>
+      <v-text-field v-model="updateMenuPayload.title" label="ชื่อเมนู" color="primary" variant="outlined" required></v-text-field>
+      <v-textarea v-model="updateMenuPayload.detail" label="รายละเอียดเมนู" color="primary" variant="outlined" required></v-textarea>
+      <v-number-input v-model="updateMenuPayload.price" label="ราคา (บาท)" color="primary" controlVariant="split" variant="outlined" required></v-number-input>
+      <v-select v-model="updateMenuPayload.category" label="หมวดหมู่อาหาร / เครื่องดิ่ม" color="primary" :items="stockCategoryList" variant="outlined" required></v-select>
+
+      <!-- Option border -->
+      <div v-for="(item, index) in updateMenuPayload.option" class="border pa-3 mb-6">
+        <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
+        <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
+        <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
+          <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+        </div>
+        <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
+      </div>
+      <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMainOption">+ เพิ่มหัวข้อตัวเลือก</v-btn>
+
+      <!-- Material border -->
+      <div v-for="(item, index) in updateMenuPayload.materail" class="border pa-3 mb-6">
+        <v-select v-model="item._id" label="เลือกวัตถุดิบ" :items="stockList" variant="outlined" color="primary"></v-select>
+        <v-number-input v-model="item.amount" controlVariant="split" label="ปริมาณ" color="primary" variant="outlined"></v-number-input>
+        <v-select v-model="item.unit" label="หน่วย" :items="['กิโลกรัม', 'กรัม', 'มิลลิกรัม', 'ลิตร', 'มิลลิลิต', 'ขวด', 'ฟอง']" variant="outlined" color="primary"></v-select>
+      </div>
+      <v-btn variant="outlined" color="primary" class="w-full mb-6" @click="addMaterail">+ วัตถุดิบ</v-btn>
+    </div>
+
+    <div class="flex justify-end gap-3">
+      <v-dialog max-width="500">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn v-bind="activatorProps" color="primary">อัพเดตเมนูอาหาร</v-btn>
+        </template>
+
+        <template v-slot:default="{ isActive }">
+          <v-card title="ยืนยันการทำรายการ">
+            <v-card-text>
+              ยืนยันการทำรายการนี้หรือไม่
+            </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="red" variant="text" @click="removeImage" size="small">
-                ลบรูปภาพ
-              </v-btn>
+              <v-btn @click="onUpdateMenuItemSubmit(updateMenuPayload._id); isActive.value = false" class="text-primary">ตกลง</v-btn>
+              <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
             </v-card-actions>
           </v-card>
-        </div>
-      </div>
+        </template>
+      </v-dialog>
+      <v-dialog max-width="500">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn v-bind="activatorProps" color="error">ลบเมนูอาหาร</v-btn>
+        </template>
 
-      <div class="flex justify-end gap-3">
-        <v-dialog max-width="500">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-btn v-bind="activatorProps" color="primary">อัพเดตรายการ</v-btn>
-          </template>
-
-          <template v-slot:default="{ isActive }">
-            <v-card title="ยืนยันการทำรายการ">
-              <v-card-text>
-                ยืนยันการทำรายการนี้หรือไม่
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn @click="updateStockItem(); isActive.value = false" class="text-primary">ตกลง</v-btn>
-                <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
-              </v-card-actions>
-            </v-card>
-          </template>
-        </v-dialog>
-        <v-btn @click="isUpdateStockItemModalActive = false">ปิดหน้าต่าง</v-btn>
-      </div>
-    </v-form>
+        <template v-slot:default="{ isActive }">
+          <v-card title="ยืนยันการลบรายการ">
+            <v-card-text>
+              ยืนยันว่าต้องการลบรายการนี้หรือไม่
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn @click="onDeleteMenuItem(updateMenuPayload._id); isActive.value = false" class="text-primary">ตกลง</v-btn>
+              <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
+      <v-btn @click="isUpdateMenuItemModalActive = false">ปิดหน้าต่าง</v-btn>
+    </div>
   </Modal>
 </template>
 >

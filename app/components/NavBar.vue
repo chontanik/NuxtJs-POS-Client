@@ -90,7 +90,8 @@
     <v-list-item to="/manager/category" prepend-icon="mdi-tag-multiple" link title="หมวดหมู่"></v-list-item>
     <v-list-item to="/manager/stock" prepend-icon="mdi-warehouse" link title="สินค้าคงคลัง"></v-list-item>
     <v-list-item to="/manager/menu" prepend-icon="mdi-food" link title="เมนูอาหาร"></v-list-item>
-    <v-list-item to="/manager/tables" prepend-icon="mdi-table-furniture" link title="จัดการโต๊ะ"></v-list-item>
+    <v-list-item to="/manager/table-management" prepend-icon="mdi-table-furniture" link title="จัดการโต๊ะ"></v-list-item>
+    <v-list-item to="/manager/orderfood" prepend-icon="mdi-table-furniture" link title="สั่งอาหาร"></v-list-item>
     <v-list-item to="/manager/employees" prepend-icon="mdi-account-group" link title="พนักงาน"></v-list-item>
     <v-list-item to="/manager/kitchen" prepend-icon="mdi-chef-hat" link title="ครัว"></v-list-item>
     <v-list-item>
