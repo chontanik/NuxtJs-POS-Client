@@ -10,6 +10,7 @@
     tables.value = tableData;
   });
 
+  // Show food order modal
   const isOnSelectFoodPage = ref(true);
   const menuList = ref([]);
   async function activeOrderFoodModal(tableId) {
@@ -25,9 +26,28 @@
     isOrderModalActive.value = true;
   }
 
+  // Get food detail for ordering food
+  const isFoodDetailPage = ref(false);
+  const orderFoodDetai = ref({});
   async function selectFood(foodId) {
     isOnSelectFoodPage.value = false;
+    isFoodDetailPage.value = true;
     console.log(foodId);
+
+    const menu = JSON.parse(localStorage.getItem("menuList")) || [];
+    orderFoodDetai.value = menu[foodId];
+  }
+
+  // Ordering food
+  async function orderFood() {
+
+  }
+
+  async function modalBack() {
+    if (isFoodDetailPage.value) {
+      isFoodDetailPage.value = false;
+      isOnSelectFoodPage.value = true;
+    }
   }
 </script>
 
@@ -55,8 +75,12 @@
 
   <Modal :show="isOrderModalActive" title="สั่งรายการอาหาร">
     <div class="flex justify-between pb-3 border-b border-[#121212]">
-      <div class="my-auto">
-        <h1 class="text-xl">เลือกเมนูอาหาร</h1>
+      <div class="my-auto flex gap-2">
+        <v-btn v-if="!isOnSelectFoodPage" elevation="0" @click="modalBack">
+          <v-icon icon="mdi-arrow-left" start></v-icon>
+          <span>กลับ</span>
+        </v-btn>
+        <h1 class="text-xl my-auto">เลือกเมนูอาหาร</h1>
       </div>
       <div>
         <v-btn icon variant="text">
@@ -65,6 +89,7 @@
       </div>
     </div>
 
+    <!-- Food selection box -->
     <div v-if="isOnSelectFoodPage">
       <v-hover v-for="(menuItem, menuIndex) in menuList">
         <template v-slot:default="{ isHovering, props }">
@@ -87,6 +112,54 @@
           </v-card>
         </template>
       </v-hover>
+    </div>
+
+    <div v-if="isFoodDetailPage">
+      <v-row>
+        <v-col col="6">
+          <img :src="orderFoodDetai.img" class="w-full object-cover mx-auto mt-2 rounded" alt="foodPreview">
+        </v-col>
+        <v-col col="6">
+          <h1 class="text-2xl font-bold">{{ orderFoodDetai.title }}</h1>
+          <p>{{ orderFoodDetai.detail }}</p>
+          <p class="mb-3">ราคาเริ่มต้น {{ orderFoodDetai.price }} บาท</p>
+          <h2 class="text-xl mb-3 font-bold">ตัวเลือก</h2>
+          <div v-for="(optionItem, optionIndex) in orderFoodDetai.option">
+            <h3 class="text-lg">{{ optionItem.mainTitle }}</h3>
+            <div v-if="optionItem.type == 1">
+              <v-checkbox v-for="(subOptionItem, subItemIndex) in optionItem.subTitle" :label="subOptionItem.title" :value="subOptionItem.title" color="primary"></v-checkbox>
+            </div>
+            <div v-else-if="optionItem.type == 2">
+              <v-radio-group>
+                <v-radio v-for="(subOptionItem, subItemIndex) in optionItem.subTitle" :label="subOptionItem.title" :value="subOptionItem.title" color="primary"></v-radio>
+              </v-radio-group>
+            </div>
+          </div>
+          <v-number-input controlVariant="split" label="จำนวน" variant="outlined" color="primary"></v-number-input>
+          <p class="text-xl">ราคาสุทธิ <span class="font-bold">{{ Number(orderFoodDetai.price).toLocaleString("TH-th") }}</span> บาท</p>
+        </v-col>
+      </v-row>
+    </div>
+    <div class="flex justify-end gap-3 border-t border-[#121212] mt-3 pt-3">
+      <v-dialog v-if="!isOnSelectFoodPage" max-width="500">
+        <template v-slot:activator="{ props: activatorProps }">
+          <v-btn v-bind="activatorProps" color="primary">สั่งอาหาร</v-btn>
+        </template>
+
+        <template v-slot:default="{ isActive }">
+          <v-card title="ยืนยันการทำรายการ">
+            <v-card-text>
+              ยืนยันการทำรายการนี้หรือไม่
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn @click="onUpdateMenuItemSubmit(updateMenuPayload._id); isActive.value = false" class="text-primary">ตกลง</v-btn>
+              <v-btn @click="isActive.value = false" class="text-red-accent-4">ยกเลิก</v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
+      <v-btn @click="isOrderModalActive = false">ปิดหน้าต่าง</v-btn>
     </div>
   </Modal>
 </template>

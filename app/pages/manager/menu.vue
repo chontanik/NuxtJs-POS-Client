@@ -127,6 +127,8 @@
 
     loading.value = false;
     isAddMenuItemActive.value = false;
+    
+    await getMenuList();
   }
 
   // Update menu item
