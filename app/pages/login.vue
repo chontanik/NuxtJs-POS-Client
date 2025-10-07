@@ -18,11 +18,9 @@ async function onLoginSubmit() {
   // สมมุติว่ามีการเรียก API
   await new Promise(resolve => setTimeout(resolve, 2000)); 
 
-  if (loginPayload.value.username == "Manager") {
-    await navigateTo("/manager/dashboard");
-  }
 
   loading.value = false; // ปิดโหลดเมื่อเสร็จ
+  await navigateTo("/manager/dashboard");
 }
 </script>
 

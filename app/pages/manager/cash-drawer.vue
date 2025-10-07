@@ -199,8 +199,8 @@
       <v-container>
         <v-row>
           <!-- ส่วนซ้าย: รายละเอียดการสั่งซื้อ -->
-          <v-col cols="12" lg="6">
-            <v-card elevation="2" class="h-100">
+          <v-col cols="12" sm="6">
+            <v-card elevation="2">
               <v-card-title class="text-h6 font-weight-bold pa-4 text-center">
                 เงินเข้า / เงินออก
               </v-card-title>
@@ -219,6 +219,9 @@
               </div>
               <v-card-text class="pa-4">
                 <!-- History list -->
+                <div>
+                  <span class="text-lg">ประวัติทำรายการ</span>
+                </div>
                 <v-list class="overflow-y-scroll h-[300px]">
                   <v-list-item v-for="(item, index) in cashInCashOutList" :key="index">
                     <v-list-item-content>
@@ -239,8 +242,8 @@
           </v-col>
           
           <!-- ส่วนขวา: สรุปยอดเงินและชำระ -->
-          <v-col cols="12" lg="6">
-            <v-card elevation="2" class="h-100">
+          <v-col cols="12" sm="6">
+            <v-card elevation="2" class="h-full">
               <v-card-title class="text-h6 font-weight-bold pa-4 text-center">
                 สรุปยอดเงิน
               </v-card-title>

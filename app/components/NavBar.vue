@@ -85,15 +85,15 @@
     <v-list-item title="Manager" subtitle="เมนูการจัดการร้าน"></v-list-item>
     <v-divider></v-divider>
     <v-list-item to="/manager/dashboard" prepend-icon="mdi-view-dashboard" link title="ข้อมูลภาพรวม"></v-list-item>
-    <v-list-item prepend-icon="mdi-point-of-sale" link title="เปิดรอบบิล" @click="isOpenForSalesModalActive = true"></v-list-item>
+    <v-list-item prepend-icon="mdi-cash-multiple" link title="เปิดรอบบิล" @click="isOpenForSalesModalActive = true"></v-list-item>
     <v-list-item to="/manager/cash-drawer" prepend-icon="mdi-cash-register" link title="ลิ้นชักเก็บ"></v-list-item>
     <v-list-item to="/manager/category" prepend-icon="mdi-tag-multiple" link title="หมวดหมู่"></v-list-item>
     <v-list-item to="/manager/stock" prepend-icon="mdi-warehouse" link title="สินค้าคงคลัง"></v-list-item>
-    <v-list-item to="/manager/menu" prepend-icon="mdi-food" link title="เมนูอาหาร"></v-list-item>
-    <v-list-item to="/manager/table-management" prepend-icon="mdi-table-furniture" link title="จัดการโต๊ะ"></v-list-item>
-    <v-list-item to="/manager/orderfood" prepend-icon="mdi-table-furniture" link title="สั่งอาหาร"></v-list-item>
-    <v-list-item to="/manager/employees" prepend-icon="mdi-account-group" link title="พนักงาน"></v-list-item>
-    <v-list-item to="/manager/kitchen" prepend-icon="mdi-chef-hat" link title="ครัว"></v-list-item>
+    <v-list-item to="/manager/menu" prepend-icon="mdi-silverware-fork-knife" link title="เมนูอาหาร"></v-list-item>
+    <v-list-item to="/manager/table-management" prepend-icon="mdi-table-chair" link title="จัดการโต๊ะ"></v-list-item>
+    <v-list-item to="/manager/orderfood" prepend-icon="mdi-food-variant" link title="สั่งอาหาร"></v-list-item>
+    <v-list-item to="/manager/employees" prepend-icon="mdi-account-tie" link title="พนักงาน"></v-list-item>
+    <v-list-item to="/manager/kitchen" prepend-icon="mdi-pot-steam" link title="ครัว"></v-list-item>
     <v-list-item>
       <v-btn variant="text" class="w-full text-red-accent-4" prepend-icon="mdi-logout" @click="() => navigateTo('/login')">
         ออกจากระบบ

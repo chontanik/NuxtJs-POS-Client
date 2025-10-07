@@ -57,7 +57,8 @@
       type: 1,
       mainTitle: null,
       subTitle: [{
-        title: null
+        title: null,
+        price: 0
       }]
     });
 
@@ -359,7 +360,14 @@
         <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
         <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
         <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
-          <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+          <v-row>
+            <v-col cols="6">
+              <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-number-input v-model="subTitleItem.price" controlVariant="split" label="บวกราคาเพิ่ม" variant="outlined" color="primary" density="compact"></v-number-input>
+            </v-col>
+          </v-row>
         </div>
         <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
       </div>
@@ -423,7 +431,14 @@
         <v-select v-model="item.type" label="เลือกชนิดตัวเลือก" :items="[{title: 'เลือกได้หลายอย่าง', value: 1}, {title: 'เลือกได้อย่างเดียว', value: 2}]" item-title="title" item-value="value" variant="outlined" color="primary"></v-select>
         <v-text-field v-model="item.mainTitle" :label="'ชื่อหัวข้อตัวเลือกที่ ' + (index + 1)" color="primary" variant="outlined"></v-text-field>
         <div v-for="(subTitleItem, subTitleIndex) in item.subTitle" no-gutters>
-          <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+          <v-row>
+            <v-col cols="6">
+              <v-text-field v-model="subTitleItem.title" :label="'ชื่อตัวเลือกที่ ' + (subTitleIndex + 1)" color="primary" variant="outlined" density="compact" class="pa-0 me-2"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-number-input v-model="subTitleItem.price" controlVariant="split" label="บวกราคาเพิ่ม" variant="outlined" color="primary" density="compact"></v-number-input>
+            </v-col>
+          </v-row>
         </div>
         <v-btn v-btn variant="outlined" class="w-full" @click="addSubOption(index)">เพิ่มตัวเลือก</v-btn>
       </div>
